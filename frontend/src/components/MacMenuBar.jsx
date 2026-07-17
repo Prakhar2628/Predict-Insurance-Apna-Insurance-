@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import axios from 'axios';
+import API_BASE from '../config';
 
 
 export function AppleLogo({ className = "w-4 h-4" }) {
@@ -136,7 +137,7 @@ export default function MacMenuBar({ setActiveTab, showToast }) {
                 smoker: Boolean(p.smoker),
                 occupation: p.occupation || 'private_job'
               }));
-              const res = await axios.post('http://127.0.0.1:8000/import', validArray);
+              const res = await axios.post(`${API_BASE}/import`, validArray);
               if (showToast) showToast(`Imported ${res.data.imported_count} patients successfully!`, 'success');
               window.dispatchEvent(new Event('patientImported'));
             } catch (err) {
@@ -150,7 +151,7 @@ export default function MacMenuBar({ setActiveTab, showToast }) {
       }},
       { label: '⬇ Export All Registered Patients', action: async () => {
         try {
-          const res = await axios.get('http://127.0.0.1:8000/view');
+          const res = await axios.get(`${API_BASE}/view`);
           const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a'); a.href = url; a.download = 'patients_export.json'; a.click();
@@ -174,8 +175,8 @@ export default function MacMenuBar({ setActiveTab, showToast }) {
       }},
       { label: '🖨 Print This Page', action: () => window.print() },
       'separator',
-      { label: '🌐 Check Backend Health', action: () => window.open('http://127.0.0.1:8000/health', '_blank') },
-      { label: '📖 API Docs (Swagger)', action: () => window.open('http://127.0.0.1:8000/docs', '_blank') },
+      { label: '🌐 Check Backend Health', action: () => window.open(`${API_BASE}/health`, '_blank') },
+      { label: '📖 API Docs (Swagger)', action: () => window.open(`${API_BASE}/docs`, '_blank') },
     ],
     Edit: [
       { label: 'Copy Last Result', shortcut: '⌘C', action: () => {
@@ -218,7 +219,7 @@ export default function MacMenuBar({ setActiveTab, showToast }) {
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }},
       'separator',
-      { label: 'Open FastAPI Backend', action: () => window.open('http://127.0.0.1:8000', '_blank') },
+      { label: 'Open FastAPI Backend', action: () => window.open(API_BASE, '_blank') },
     ],
     Window: [
       { label: 'Scroll to Top', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
@@ -234,8 +235,8 @@ export default function MacMenuBar({ setActiveTab, showToast }) {
     ],
     Help: [
       { label: 'About InsurePredict', action: () => navigate('about') },
-      { label: 'API Documentation', action: () => window.open('http://127.0.0.1:8000/docs', '_blank') },
-      { label: 'Redoc Reference', action: () => window.open('http://127.0.0.1:8000/redoc', '_blank') },
+      { label: 'API Documentation', action: () => window.open(`${API_BASE}/docs`, '_blank') },
+      { label: 'Redoc Reference', action: () => window.open(`${API_BASE}/redoc`, '_blank') },
       'separator',
       { label: 'Default Login: admin / aura2026', action: () => toast('Credentials: admin / aura2026') },
     ],

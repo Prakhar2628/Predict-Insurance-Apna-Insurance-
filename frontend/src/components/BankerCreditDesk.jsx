@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { Landmark, ArrowRight, ShieldCheck, Percent, Activity, IndianRupee, UserCheck, AlertTriangle } from 'lucide-react';
 
 export default function BankerCreditDesk({ showToast }) {
@@ -26,7 +27,7 @@ export default function BankerCreditDesk({ showToast }) {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:8000/view');
+        const res = await axios.get(`${API_BASE}/view`);
         const arr = Object.entries(res.data).map(([id, val]) => ({
           id,
           ...val
@@ -102,7 +103,7 @@ export default function BankerCreditDesk({ showToast }) {
         existing_debt: parseFloat(inputs.existing_debt || 0),
       };
 
-      const res = await axios.post('http://127.0.0.1:8000/bank/evaluate', payload);
+      const res = await axios.post(`${API_BASE}/bank/evaluate`, payload);
       setResult(res.data);
       showToast('Credit risk parameters calculated successfully!', 'success');
     } catch (err) {

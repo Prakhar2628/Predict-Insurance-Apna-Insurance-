@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { User, MapPin, Briefcase, Activity, Play, Sparkles, IndianRupee, Wifi, WifiOff } from 'lucide-react';
 
 export default function PredictorForm({ onResult, showToast }) {
@@ -24,7 +25,7 @@ export default function PredictorForm({ onResult, showToast }) {
 
   // Check backend availability on mount
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/health', { timeout: 2000 })
+    axios.get(`${API_BASE}/health`, { timeout: 2000 })
       .then(() => setBackendOnline(true))
       .catch(() => setBackendOnline(false));
   }, []);
@@ -151,7 +152,7 @@ export default function PredictorForm({ onResult, showToast }) {
         occupation: formData.occupation,
       };
 
-      const response = await axios.post('http://127.0.0.1:8000/predict', payload, { timeout: 5000 });
+      const response = await axios.post(`${API_BASE}/predict`, payload, { timeout: 5000 });
       setBackendOnline(true);
       setOfflineMode(false);
       const predictionResponse = {

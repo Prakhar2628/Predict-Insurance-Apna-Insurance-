@@ -15,6 +15,7 @@ import DeveloperSandbox from './components/DeveloperSandbox';
 import BankerCreditDesk from './components/BankerCreditDesk';
 import StressTester from './components/StressTester';
 import axios from 'axios';
+import API_BASE from './config';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('predict');
@@ -35,7 +36,7 @@ export default function App() {
     }
     setLoginLoading(true);
     try {
-      const res = await axios.post('http://127.0.0.1:8000/login', { username, password });
+      const res = await axios.post(`${API_BASE}/login`, { username, password });
       if (res.data.success) {
         localStorage.setItem('aura_session', 'true');
         setIsLoggedIn(true);

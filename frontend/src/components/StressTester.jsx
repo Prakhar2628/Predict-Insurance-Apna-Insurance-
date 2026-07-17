@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { AlertOctagon, TrendingUp, Users, ShieldAlert, Zap, RefreshCw, BarChart2, Shield } from 'lucide-react';
 
 export default function StressTester({ showToast }) {
@@ -14,7 +15,7 @@ export default function StressTester({ showToast }) {
 
   const fetchPatients = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/view');
+      const res = await axios.get(`${API_BASE}/view`);
       const arr = Object.entries(res.data).map(([id, val]) => ({
         id,
         ...val
@@ -66,8 +67,8 @@ export default function StressTester({ showToast }) {
 
       // 3. Batch predict both sets
       const [baseRes, shockedRes] = await Promise.all([
-        axios.post('http://127.0.0.1:8000/batch/predict', baseItems),
-        axios.post('http://127.0.0.1:8000/batch/predict', shockedItems)
+        axios.post(`${API_BASE}/batch/predict`, baseItems),
+        axios.post(`${API_BASE}/batch/predict`, shockedItems)
       ]);
 
       const basePreds = baseRes.data.predictions;

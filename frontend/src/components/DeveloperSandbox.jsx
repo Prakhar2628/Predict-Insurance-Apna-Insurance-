@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { Terminal, Send, CheckCircle, AlertTriangle, Cpu, Play } from 'lucide-react';
 
 export default function DeveloperSandbox({ showToast }) {
@@ -38,7 +39,7 @@ export default function DeveloperSandbox({ showToast }) {
 
     const t0 = performance.now();
     try {
-      const res = await axios.post('http://127.0.0.1:8000/predict', parsedPayload);
+      const res = await axios.post(`${API_BASE}/predict`, parsedPayload);
       const t1 = performance.now();
       
       setLatency(Math.round(t1 - t0));

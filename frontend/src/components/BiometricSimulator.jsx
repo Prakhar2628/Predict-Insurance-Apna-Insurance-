@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { Activity, HeartPulse, Flame, IndianRupee, TrendingUp, Info } from 'lucide-react';
 
 // ─── Mini Bar Chart for risk factors ──────────────────────────────
@@ -101,7 +102,7 @@ export default function BiometricSimulator({ showToast }) {
         city: inputs.city,
         occupation: inputs.occupation,
       };
-      const res = await axios.post('http://127.0.0.1:8000/predict', payload, { timeout: 4000 });
+      const res = await axios.post(`${API_BASE}/predict`, payload, { timeout: 4000 });
       setPrediction(String(res.data.predicted_category));
     } catch {
       // Local fallback

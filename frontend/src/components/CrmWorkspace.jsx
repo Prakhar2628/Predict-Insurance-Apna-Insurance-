@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 import { UserPlus, Search, Trash2, ShieldAlert, ArrowUpDown, ChevronDown, CheckCircle2, UserCheck, Shield } from 'lucide-react';
 
 export default function CrmWorkspace({ showToast }) {
@@ -31,7 +32,7 @@ export default function CrmWorkspace({ showToast }) {
   const fetchPatients = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://127.0.0.1:8000/view');
+      const res = await axios.get(`${API_BASE}/view`);
       // Convert mapping dict into array format
       const arr = Object.entries(res.data).map(([id, val]) => ({
         id,
@@ -79,7 +80,7 @@ export default function CrmWorkspace({ showToast }) {
         income_lpa: parseFloat(newPatient.income_lpa),
       };
 
-      await axios.post('http://127.0.0.1:8000/create', payload);
+      await axios.post(`${API_BASE}/create`, payload);
       showToast(`Patient ${newPatient.id} created successfully!`, 'success');
       setShowAddModal(false);
       // Reset
@@ -105,7 +106,7 @@ export default function CrmWorkspace({ showToast }) {
   const handleDelete = async (id) => {
     if (!window.confirm(`Delete patient registration ${id}?`)) return;
     try {
-      await axios.delete(`http://127.0.0.1:8000/delete/${id}`);
+      await axios.delete(`${API_BASE}/delete/${id}`);
       showToast(`Patient ID ${id} deleted.`, 'success');
       fetchPatients();
     } catch (err) {
@@ -127,7 +128,7 @@ export default function CrmWorkspace({ showToast }) {
         occupation: patient.occupation || 'private_job',
       };
 
-      const res = await axios.post('http://127.0.0.1:8000/predict', payload);
+      const res = await axios.post(`${API_BASE}/predict`, payload);
       setActivePrediction({
         patient: {
           ...patient,
