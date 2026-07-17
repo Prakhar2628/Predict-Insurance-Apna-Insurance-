@@ -448,6 +448,21 @@ def get_indian_plans(category: str) -> list[dict]:
             {"name": "Kavach Super Shield", "coverage": "₹1 Crore Cover", "premium": "₹4,400/month (Includes 50% Loading)", "type": "Comprehensive Plan"}
         ]
 
+def apply_actuarial_overrides(ml_pred: str, bmi: float, smoker: bool, age: int, income: float) -> str:
+    """Override ML prediction (0, 1, 2) based on real-world medical/financial rules."""
+    pred_int = int(ml_pred) if ml_pred.isdigit() else 0
+    
+    if bmi > 35:
+        pred_int = max(pred_int, 2)
+    if income < 4.0 and (bmi > 28 or smoker):
+        pred_int = max(pred_int, 2)
+    if smoker:
+        pred_int = max(pred_int, 1)
+    if age > 60 and income < 5.0:
+        pred_int = max(pred_int, 2)
+        
+    return str(pred_int)
+
 # 2. Prediction Route (Raw API)
 @app.post("/predict")
 def predict_premium(data: UserInput):
@@ -465,6 +480,8 @@ def predict_premium(data: UserInput):
     prediction_raw = str(model.predict(input_df)[0])
     mapping = {"Low": "0", "Medium": "1", "High": "2", "Critical": "3"}
     prediction = mapping.get(prediction_raw, prediction_raw)
+    
+    prediction = apply_actuarial_overrides(prediction, data.bmi, data.smoker, data.age, data.income_lpa)
     
     return JSONResponse(
         status_code=200,
@@ -536,7 +553,11 @@ def batch_predict(items: list[BatchPredictionItem]):
     predictions = model.predict(input_df)
     
     mapping = {"Low": "0", "Medium": "1", "High": "2", "Critical": "3"}
-    mapped_predictions = [mapping.get(str(p), str(p)) for p in predictions]
+    mapped_predictions = []
+    for i, p in enumerate(predictions):
+        base_pred = mapping.get(str(p), str(p))
+        final_pred = apply_actuarial_overrides(base_pred, records[i]['bmi'], items[i].smoker, items[i].age, items[i].income_lpa)
+        mapped_predictions.append(final_pred)
     
     return {"predictions": mapped_predictions}
 
@@ -585,6 +606,8 @@ def evaluate_bank_risk(data: BankEvaluationRequest):
     prediction_raw = str(model.predict(input_df)[0])
     mapping = {"Low": "0", "Medium": "1", "High": "2", "Critical": "3"}
     prediction = mapping.get(prediction_raw, prediction_raw)
+    
+    prediction = apply_actuarial_overrides(prediction, bmi, data.smoker, data.age, data.income_lpa)
     
     # Debt-To-Income Calculations (Income in LPA. 1 LPA = 100,000 / 12 = 8,333.33 per month)
     monthly_income = (data.income_lpa * 100000) / 12
