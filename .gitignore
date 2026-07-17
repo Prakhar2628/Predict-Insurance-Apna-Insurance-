@@ -1,0 +1,17 @@
+# Python environment
+myenv/
+venv/
+__pycache__/
+*.pyc
+
+# Node / React
+node_modules/
+dist/
+.oxlintrc.json
+
+# Local databases & model state (keep SQLite local unless desired)
+patients.db
+
+# OS Files
+.DS_Store
+Thumbs.db
